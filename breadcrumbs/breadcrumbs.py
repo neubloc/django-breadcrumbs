@@ -4,6 +4,7 @@ TODO: maybe is better to move to contrib/breadcrumbs
 """
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.text import force_unicode 
@@ -81,7 +82,9 @@ class Breadcrumbs(Singleton):
         # fill home if settings.BREADCRUMBS_AUTO_HOME is True
         if self.__autohome and len(self.__bds) == 0:
             home_title = getattr(settings, 'BREADCRUMBS_HOME_TITLE', _(u'Home'))
-            self.__fill_bds((home_title, u"/"))
+            home_view_name = getattr(settings, 'BREADCRUMBS_HOME_VIEW', None)
+            home_url = reverse(home_view_name) if home_view_name else u"/"
+            self.__fill_bds((home_title, home_url))
 
     def _clean(self):
         self.__bds = []
